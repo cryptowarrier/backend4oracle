@@ -1,0 +1,54 @@
+name: backend4oracle
+
+# The build section defines how to build the images of your development environment
+# More info: https://www.okteto.com/docs/reference/manifest/#build
+build:
+
+  # You can use the following env vars to refer to this image in your deploy commands:
+  #  - OKTETO_BUILD_SERVER_REGISTRY: image registry
+  #  - OKTETO_BUILD_SERVER_REPOSITORY: image repo
+  #  - OKTETO_BUILD_SERVER_IMAGE: image name
+  #  - OKTETO_BUILD_SERVER_TAG: image tag
+  server:
+    context: .
+    dockerfile: Dockerfile
+    target: development-build-stage
+
+# The deploy section defines how to deploy your development environment
+# More info: https://www.okteto.com/docs/reference/manifest/#deploy
+deploy:
+  compose: docker-compose.yml
+
+# The dependencies section defines other git repositories to be deployed as part of your development environment
+# More info: https://www.okteto.com/docs/reference/manifest/#dependencies
+# dependencies:
+#   - https://github.com/okteto/sample
+
+
+# The dev section defines how to activate a development container
+# More info: https://www.okteto.com/docs/reference/manifest/#dev
+dev:
+  mongo:
+    command: bash
+    workdir: /usr/src/app
+    sync:
+      - .:/usr/src/app
+    forward:
+      - 9229:9229
+      - 27017:27017
+      - 28017:28017
+  proxy:
+    command: bash
+    workdir: /usr/src/app
+    sync:
+      - .:/usr/src/app
+    forward:
+      - 9229:9229
+      - 8080:80
+  server:
+    command: sh
+    sync:
+      - ./:/app
+    forward:
+      - 3000:3000
+
